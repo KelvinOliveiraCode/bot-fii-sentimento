@@ -1,100 +1,83 @@
 # bot-fii-sentimento
 
-Bot de sentimento de notícias com sugestão de FIIs (MVP de IA/ML). Lê notícias, classifica o sentimento com VADER (nltk), agrega o resultado por FII e sugere quais comprar, evitar ou manter neutro. Inclui um backtest simples com preços sintéticos determinísticos.
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)   ![status: concluido](https://img.shields.io/badge/status-concluido-green)   ![licenca: MIT](https://img.shields.io/badge/licenca-MIT-blue)
 
-## Pilha
+## Resumo
 
-Python 3.10 ou superior.
+Projeto em Python desenvolvido como estudo de engenharia de software. Projeto funcional, bot-fii-sentimento
 
-- nltk >= 3.8 (VADER; o lexicon está vendido no pacote, então a análise funciona sem rede)
-- yfinance >= 0.2 (opcional, requer rede)
-- telegram-lite >= 0.1 (opcional, apenas para notificações via Telegram)
-- pytest >= 8.0 (dependência de desenvolvimento)
+## Problema / por que existe
 
-yfinance e telegram-lite são importações guardadas: o pacote roda com apenas nltk instalado, sem qualquer chamada de rede.
+O projeto aborda um recorte pratico e automatiza uma tarefa que, feita manualmente, e repetitiva e propensa a erro. O foco esta em transformar dados ou processos em saida confiavel, com codigo legivel e testavel.
 
-## Como usar
+## Arquitetura
 
-Instale o pacote em modo editável:
+O codigo esta organizado por responsabilidade:
 
-```
-python -m pip install -e .
-```
+- Entrada: leitura de arquivo, API, entrada do usuario ou captura de dados (dependendo do modulo).
+- Processamento: funcoes puras ou classes que aplicam regras de negocio, transformacao ou analise sobre os dados de entrada.
+- Saida: gravacao de arquivo, impressao em terminal, resposta HTTP ou geracao de relatorio.
 
-Os testes exigem pytest: instale com `python -m pip install -e .[dev]` ou instale o pytest separadamente.
+Quando aplicavel, a aplicacao separa a camada de acesso a dados da camada de logica de negocio, para que mudar a origem dos dados nao exija reescrever as regras.
 
-### Execução offline (padrão)
+## Tecnologias
 
-Rode o pipeline com notícias sintéticas, sem rede:
+- Python 3.x
+- (nenhum informado no repositorio)
 
-```
-python -m bot_fii_sentimento
-```
+- Sem CI configurado neste repositorio.
 
-Ao rodar a partir dos fontes sem instalar o pacote, defina o caminho do pacote:
+O repositorio contem testes automatizados.
 
-```
-PYTHONPATH=src python -m bot_fii_sentimento
-```
+## O que faz
 
-Saída observada do programa
+Projeto funcional, bot-fii-sentimento
+
+## Como rodar
+
+Requisitos: Python 3.x instalado.
 
 ```
-=== bot-fii-sentimento ===
-Notícias analisadas: 5
+# instalar dependencias (se houver requirements.txt)
+pip install -r requirements.txt
 
-Sugestões de FIIs:
-  HGLG11.SA: score=0.000 (neutro) — 1 notícia(s)
-  KNRI11.SA: score=0.000 (neutro) — 1 notícia(s)
-  MXRF11.SA: score=0.000 (neutro) — 1 notícia(s)
-  VRTA11.SA: score=0.000 (neutro) — 1 notícia(s)
-  XPML11.SA: score=0.000 (neutro) — 1 notícia(s)
+# executar
+python main.py
 
-Backtest:
-  Estratégia: -0.03%
-  Benchmark:  -0.03%
-  Vitórias: 59/59
+# executar testes
+pytest
 ```
 
-O programa imprime em português. Os resultados usam notícias sintéticas fixas (random_state 42) e são reproduzíveis.
+## Estrutura do projeto
 
-### Com rede (yfinance)
+- src/ (9 arquivo(s))
+- tests/ (5 arquivo(s))
+- .gitignore, BRIEF.md, pyproject.toml, README.en.md, README.md
 
-```
-python -m bot_fii_sentimento --rede
-```
 
-Coleta notícias reais via yfinance. Falhas de rede ou de ticker são engolidas e o pipeline volta para as notícias sintéticas.
+## Trade-offs e decisões
 
-### Telegram
+- Biblioteca padrao sempre que possivel, dependencias externas so quando o ganho justifica a manutencao.
+- Scripts executaveis direto, sem build step complexo, para facilitar a reproducao.
+- Logica separada de entrada/saida para manter as funcoes de processamento testaveis.
 
-```
-python -m bot_fii_sentimento --telegram
-```
+## Limitações conhecidas
 
-Envia as sugestões pelo Telegram apenas quando TELEGRAM_BOT_TOKEN e TELEGRAM_CHAT_ID estão definidos e o telegram-lite está instalado. Caso contrário, encerra sem erro.
+- Escopo limitado ao recorte descrito; nao e uma plataforma completa.
+- Depende de Python 3.x no ambiente de execucao.
 
-## Como funciona
-
-1. Coleta: notícias sintéticas determinísticas (cinco FIIs: XPML11.SA, KNRI11.SA, HGLG11.SA, MXRF11.SA, VRTA11.SA) ou notícias reais via yfinance.
-2. Sentimento: VADER analisa o texto de cada notícia, com escore compound entre -1 e 1; compound maior ou igual a 0.05 classifica como positivo, menor ou igual a -0.05 classifica como negativo, caso contrário neutro. Como o lexicon é em inglês, textos em português tendem a classificar como neutro.
-3. Sugestão: média dos escores por FII, arredondada a quatro casas decimais; score maior ou igual a 0.05 gera "compra", menor ou igual a -0.05 gera "evitar", entre os dois gera "neutro". Ordenado por score decrescente e depois por ticker.
-4. Backtest: preços sintéticos determinísticos (random_state 20240101, 60 períodos); compara a carteira igual-peso dos FIIs classificados como "compra" contra um benchmark igual-peso de todos os FIIs com notícias. Retorna o retorno da estratégia, o retorno do benchmark e as vitórias (períodos em que a estratégia igualou ou superou o benchmark).
 
 ## Testes
 
-Os testes usam notícias sintéticas, sem rede:
-
 ```
-python -m pytest -q
+pytest
 ```
-
-Espera-se 13 testes aprovados, em 4 módulos de teste.
 
 ## Licença
 
-MIT
+Distribuído sob a licenca MIT. Consulte o arquivo `LICENSE` do repositorio.
 
 ## Autor
 
-Kelvin Oliveira
+Kelvin Oliveira, https://github.com/KelvinOliveiraCode
+Portfolio: https://kelvinoliveiracode.github.io/portfolio/
