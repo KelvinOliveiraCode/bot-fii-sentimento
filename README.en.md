@@ -1,118 +1,98 @@
 # bot-fii-sentimento
 
-<div align="center">
-
 **English** · [Português (Brasil)](README.md)
 
-</div>
-
-[![Python 3](https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/) [![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikit-learn)](https://scikit-learn.org/) [![pandas](https://img.shields.io/badge/pandas-150458?style=flat-square&logo=pandas)](https://pandas.pydata.org/) [![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=flat-square&logo=pytest)](https://docs.pytest.org/) [![MIT License](https://img.shields.io/badge/License-MIT-f4c430?style=flat-square)](LICENSE)
-
-### Projeto funcional ,  bot-fii-sentimento
-
----
+[![Python 3](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](#) [![NLTK VADER](https://img.shields.io/badge/NLTK-VADER-3776AB?style=flat-square&logo=python)](#) [![yfinance](https://img.shields.io/badge/yfinance-optional-E8B325?style=flat-square)](#) [![pytest](https://img.shields.io/badge/pytest-13%20tests-0A9EDC?style=flat-square&logo=pytest)](#) [![MIT License](https://img.shields.io/badge/License-MIT-f4c430?style=flat-square)](LICENSE)
 
 ## What it is
 
-Projeto funcional ,  bot-fii-sentimento
+**A Brazilian REIT (FII) sentiment bot**: it collects news (synthetic by default, or via **yfinance** with the network flag), analyses **sentiment with VADER** (NLTK), suggests FIIs by aggregated sentiment score, runs a **simple backtest** and prints the result — with optional **Telegram** delivery. It is an educational finance/NLP lab; **it is not investment advice**.
 
----
+## Status
 
-## Quick Start
+An educational lab, working and tested (13 tests). The pipeline runs offline (synthetic news, seed 42).
 
-```bash
-# Clone and enter
-git clone https://github.com/KelvinOliveiraCode/<repo>.git
-cd <repo>
+## Features
 
-# Install dependencies
-# No requirements.txt detected
+- **Collection** (`coleta.py`): `coletar_noticias_sinteticas(seed=42)` — offline; `coletar_via_yfinance(tickers)` when networked.
+- **Sentiment** (`sentimento.py`): `analisar_sentimento(texto)` via `SentimentIntensityAnalyzer` (VADER) and `classificar(compound)` (positive/neutral/negative).
+- **Suggestion** (`sugerir.py`): `sugerir_fiis(noticias, min_noticias)` — aggregated score per ticker (`Sugestao`).
+- **Backtest** (`backtest.py`): `executar_backtest` — compares the picks against synthetic prices (`_gerar_precos`) and yields a `ResultadoBacktest`.
+- **Notification** (`notificacao.py`): `formatar_mensagem` + `enviar_sugestoes` (Telegram, optional).
+- **CLI** (`bot-fii-sentimento`): the full pipeline with flags for network/Telegram.
 
-# Run the project
-python main.py
+## Architecture
 
-# Run tests
-pytest
+A `bot_fii_sentimento` package with independent layers (collection → sentiment → suggestion → backtest → notification), all testable offline.
+
+```mermaid
+flowchart LR
+    N[synthetic news or yfinance] --> V[VADER - sentiment]
+    V --> SUG[sugerir_fiis - score per ticker]
+    SUG --> BT[simple backtest]
+    BT --> OUT[stdout]
+    SUG -.->|optional| TG[Telegram]
 ```
 
-## How it works
+## Stack
 
-Estrutura limpa e modular com separação de responsabilidades.
+- Python ≥ 3.10
+- nltk ≥ 3.8 (VADER), yfinance ≥ 0.2 (optional), telegram-lite ≥ 0.1 (optional)
+- pytest (dev)
 
----
+## Repository layout
 
-## Capabilities
+```
+bot-fii-sentimento/
+├── pyproject.toml · BRIEF.md
+├── src/bot_fii_sentimento/
+│   ├── coleta.py · sentimento.py · sugerir.py
+│   ├── backtest.py · notificacao.py · modelo.py
+│   └── main.py · __main__.py
+├── tests/           # 13 tests
+└── LICENSE          # MIT
+```
 
-| Capacidade | Descrição |
-|------------|-------------|
-| Carregamento de Dados | Auto-download do TensorFlow creditcard.csv (284k transações) com cache local |
-| EDA e Visualização | Distribuição de classes, histogramas de Amount, heatmaps de correlação (matplotlib/seaborn) |
-| Pré-processamento | RobustScaler em Amount/Time, split estratificado, remoção de duplicatas |
-| Balanceamento | SMOTE oversampling (fallback: class_weight="balanced") |
-| Modelagem | LogisticRegression, RandomForest, ExtraTrees com RandomizedSearchCV (StratifiedKFold) |
-| Métricas | Accuracy, Precision, Recall, F1, ROC AUC, Specificity, Confusion Matrix |
-| Seleção | Score ponderado: Recall 40% + F1 30% + Precision 20% + Accuracy 10% |
-| Persistência | Serialização joblib para modelo, scaler e resultados completos |
+## Prerequisites and installation
 
+```bash
+pip install -e .
+```
+(First VADER run may download the NLTK lexicon.)
 
----
+## How to run
 
+```bash
+bot-fii-sentimento                # offline: synthetic news
+bot-fii-sentimento --usar-rede    # collects via yfinance
+```
+Confirm flags with `--help` (the parser is the reference).
 
+## Tests and quality
 
----
+Real command (verified by the agent):
 
-## FAQ
+```bash
+PYTHONPATH=src python -m pytest tests/
+# 13 passed
+```
 
-<details>
-<summary><strong>What is this project?</strong></summary>
+## Technical decisions and trade-offs
 
-A Python study/project demonstrating core concepts.
+- **Lexicon-based VADER**: light and offline; it does not capture deep financial context (nor Portuguese finance-specific phrasing).
+- **Synthetic news as the default**: the pipeline runs and tests without network or keys.
+- **Synthetic backtest**: demonstrates the mechanics; it is no evidence of profitability.
 
-</details>
+## Known limitations and roadmap
 
-<details>
-<summary><strong>How do I run it?</strong></summary>
+- **This is not investment advice** — nothing here weighs risk, liquidity or asset situation.
+- The backtest uses synthetic prices; results say nothing about the real market.
+- Telegram requires a configured credential (optional).
 
-See [Quick Start](#quick-start) for copy-paste commands.
+## Development process
 
-</details>
+An individual project by Kelvin Oliveira, built with orchestrated AI agents and reviewed by the author.
 
-<details>
-<summary><strong>Are there tests?</strong></summary>
+## License and author
 
-No automated tests in this repository.
-
-</details>
-
-<details>
-<summary><strong>Can I use this in production?</strong></summary>
-
-This is a **study/portfolio project**. Review and harden (auth, persistence, monitoring, etc.) before production use.
-
-</details>
-
-
-
----
-
-## Documentation
-
-- **Source Code** ,  Browse the `src/` directory for implementation details
-- **API Reference** ,  Inline docstrings + type hints
-- **Architecture Diagram** ,  See [architecture.mermaid](docs/architecture.mermaid) (if present)
-- **Changelog** ,  [CHANGELOG.md](CHANGELOG.md) (if present)
-- **Contributing** ,  [CONTRIBUTING.md](CONTRIBUTING.md) (if present)
-
-## License
-
-[MIT](LICENSE) ,  Kelvin Oliveira
-
----
-
-<div align="center">
-
-**Built with** · Python 3 + scikit-learn + pandas
-
-**Author** · [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
-
-</div>
+MIT — Copyright (c) 2026 Kelvin Rebelo de Oliveira. Author: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
