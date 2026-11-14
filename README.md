@@ -6,7 +6,7 @@
 
 ## O que é
 
-**Bot de sentimento de FIIs** (fundos imobiliários): coleta notícias (sintéticas por padrão, ou **yfinance** com `--usar-rede`), analisa **sentimento com VADER** (NLTK), sugere FIIs por score agregado de sentimento, roda um **backtest simples** e imprime o resultado — com envio opcional para **Telegram**. É um laboratório educacional finanças/NLP; **não é recomendação de investimento**.
+**Bot de sentimento de FIIs** (fundos imobiliários): coleta notícias (sintéticas por padrão, ou **yfinance** com `--usar-rede`), analisa **sentimento com VADER** (NLTK), sugere FIIs por score agregado de sentimento, roda um **backtest simples** e imprime o resultado, com envio opcional para **Telegram**. É um laboratório educacional finanças/NLP; **não é recomendação de investimento**.
 
 ## Status
 
@@ -14,10 +14,10 @@ Laboratório educacional funcional e testado (13 testes). Pipeline roda offline 
 
 ## Funcionalidades
 
-- **Coleta** (`coleta.py`): `coletar_noticias_sinteticas(seed=42)` — sem rede em `coletar_via_yfinance(tickers)` quando há rede.
+- **Coleta** (`coleta.py`): `coletar_noticias_sinteticas(seed=42)`, sem rede em `coletar_via_yfinance(tickers)` quando há rede.
 - **Sentimento** (`sentimento.py`): `analisar_sentimento(texto)` via `SentimentIntensityAnalyzer` (VADER) e `classificar(compound)` (positivo/neutro/negativo).
-- **Sugestão** (`sugerir.py`): `sugerir_fiis(noticias, min_noticias)` — score agregado por ticker (`Sugestao`).
-- **Backtest** (`backtest.py`): `executar_backtest` — compara as vozes contra preços sintéticos (`_gerar_precos`) e devolve um `ResultadoBacktest`.
+- **Sugestão** (`sugerir.py`): `sugerir_fiis(noticias, min_noticias)`, score agregado por ticker (`Sugestao`).
+- **Backtest** (`backtest.py`): `executar_backtest`, compara as vozes contra preços sintéticos (`_gerar_precos`) e devolve um `ResultadoBacktest`.
 - **Notificação** (`notificacao.py`): `formatar_mensagem` + `enviar_sugestoes` (Telegram, opcional).
 - **CLI** (`bot-fii-sentimento`): pipeline completo com flags para rede/Telegram.
 
@@ -42,7 +42,7 @@ flowchart LR
 
 ## Estrutura do repositório
 
-```
+```text
 bot-fii-sentimento/
 ├── pyproject.toml · BRIEF.md
 ├── src/bot_fii_sentimento/
@@ -79,13 +79,13 @@ PYTHONPATH=src python -m pytest tests/
 
 ## Decisões técnicas e trade-offs
 
-- **VADER léxicon-based**: leve e offline; não cobre contexto financeiro profundo (nem sarcasmo/português financeiro específico).
-- **Notícias sintéticas como default**: pipeline roda e testa sem rede nem chaves.
-- **Backtest sintético**: demonstra a mecânica; não é evidência de rentabilidade.
+- VADER léxicon-based: leve e offline; não cobre contexto financeiro profundo (nem sarcasmo/português financeiro específico).
+- Notícias sintéticas como default: pipeline roda e testa sem rede nem chaves.
+- Backtest sintético: demonstra a mecânica; não é evidência de rentabilidade.
 
 ## Limitações conhecidas e roadmap
 
-- **Não é recomendação de investimento** — nada aqui considera risco, liquidez ou situação pat passar.
+- **Não é recomendação de investimento**, nada aqui considera risco, liquidez ou situação pat passar.
 - O backtest usa preços sintéticos; resultados não significam nada sobre o mercado real.
 - Telegram exige credencial configurada (opcional).
 
@@ -95,4 +95,4 @@ Projeto individual de Kelvin Oliveira, construído com agentes de IA orquestrado
 
 ## Licença e autor
 
-MIT — Copyright (c) 2026 Kelvin Rebelo de Oliveira. Autor: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfólio](https://kelvinoliveiracode.github.io/portfolio/)
+MIT. Copyright (c) 2026 Kelvin Rebelo de Oliveira. Autor: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfólio](https://kelvinoliveiracode.github.io/portfolio/)

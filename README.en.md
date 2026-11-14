@@ -6,7 +6,7 @@
 
 ## What it is
 
-**A Brazilian REIT (FII) sentiment bot**: it collects news (synthetic by default, or via **yfinance** with the network flag), analyses **sentiment with VADER** (NLTK), suggests FIIs by aggregated sentiment score, runs a **simple backtest** and prints the result — with optional **Telegram** delivery. It is an educational finance/NLP lab; **it is not investment advice**.
+**A Brazilian REIT (FII) sentiment bot**: it collects news (synthetic by default, or via **yfinance** with the network flag), analyses **sentiment with VADER** (NLTK), suggests FIIs by aggregated sentiment score, runs a **simple backtest** and prints the result, with optional **Telegram** delivery. It is an educational finance/NLP lab; **it is not investment advice**.
 
 ## Status
 
@@ -14,10 +14,10 @@ An educational lab, working and tested (13 tests). The pipeline runs offline (sy
 
 ## Features
 
-- **Collection** (`coleta.py`): `coletar_noticias_sinteticas(seed=42)` — offline; `coletar_via_yfinance(tickers)` when networked.
+- **Collection** (`coleta.py`): `coletar_noticias_sinteticas(seed=42)`, offline; `coletar_via_yfinance(tickers)` when networked.
 - **Sentiment** (`sentimento.py`): `analisar_sentimento(texto)` via `SentimentIntensityAnalyzer` (VADER) and `classificar(compound)` (positive/neutral/negative).
-- **Suggestion** (`sugerir.py`): `sugerir_fiis(noticias, min_noticias)` — aggregated score per ticker (`Sugestao`).
-- **Backtest** (`backtest.py`): `executar_backtest` — compares the picks against synthetic prices (`_gerar_precos`) and yields a `ResultadoBacktest`.
+- **Suggestion** (`sugerir.py`): `sugerir_fiis(noticias, min_noticias)`, aggregated score per ticker (`Sugestao`).
+- **Backtest** (`backtest.py`): `executar_backtest`, compares the picks against synthetic prices (`_gerar_precos`) and yields a `ResultadoBacktest`.
 - **Notification** (`notificacao.py`): `formatar_mensagem` + `enviar_sugestoes` (Telegram, optional).
 - **CLI** (`bot-fii-sentimento`): the full pipeline with flags for network/Telegram.
 
@@ -42,7 +42,7 @@ flowchart LR
 
 ## Repository layout
 
-```
+```text
 bot-fii-sentimento/
 ├── pyproject.toml · BRIEF.md
 ├── src/bot_fii_sentimento/
@@ -79,13 +79,13 @@ PYTHONPATH=src python -m pytest tests/
 
 ## Technical decisions and trade-offs
 
-- **Lexicon-based VADER**: light and offline; it does not capture deep financial context (nor Portuguese finance-specific phrasing).
-- **Synthetic news as the default**: the pipeline runs and tests without network or keys.
-- **Synthetic backtest**: demonstrates the mechanics; it is no evidence of profitability.
+- Lexicon-based VADER: light and offline; it does not capture deep financial context (nor Portuguese finance-specific phrasing).
+- Synthetic news as the default: the pipeline runs and tests without network or keys.
+- Synthetic backtest: demonstrates the mechanics; it is no evidence of profitability.
 
 ## Known limitations and roadmap
 
-- **This is not investment advice** — nothing here weighs risk, liquidity or asset situation.
+- **This is not investment advice**, nothing here weighs risk, liquidity or asset situation.
 - The backtest uses synthetic prices; results say nothing about the real market.
 - Telegram requires a configured credential (optional).
 
@@ -95,4 +95,4 @@ An individual project by Kelvin Oliveira, built with orchestrated AI agents and 
 
 ## License and author
 
-MIT — Copyright (c) 2026 Kelvin Rebelo de Oliveira. Author: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
+MIT. Copyright (c) 2026 Kelvin Rebelo de Oliveira. Author: [Kelvin Oliveira](https://github.com/KelvinOliveiraCode) · [Portfolio](https://kelvinoliveiracode.github.io/portfolio/)
